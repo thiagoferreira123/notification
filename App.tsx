@@ -80,9 +80,11 @@ function App(): React.JSX.Element {
             .getToken()
             .then(token => {
               console.log('Token:', token);
-            });
+            })
+            .catch(error => console.error(error));
         }
-      });
+      })
+      .catch(error => console.error(error));
   }
 
   return (
