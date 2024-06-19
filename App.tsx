@@ -8,6 +8,7 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -24,6 +25,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import messaging from '@react-native-firebase/messaging';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -61,6 +63,27 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  if (Platform.OS !== 'android') {
+    messaging()
+      .requestPermission()
+      .then(authStatus => {
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+          messaging().registerDeviceForRemoteMessages();
+          console.log('Authorization status:', authStatus);
+
+          messaging()
+            .getToken()
+            .then(token => {
+              console.log('Token:', token);
+            });
+        }
+      });
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
