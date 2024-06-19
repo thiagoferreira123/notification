@@ -78,6 +78,11 @@ function App(): React.JSX.Element {
     console.log('OneSignal: notification clicked:', event);
   });
 
+  OneSignal.Notifications.addEventListener('permissionChange', accepted => {
+    console.log('OneSignal: permission changed:', accepted);
+    accepted && OneSignal.login('1');
+  });
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
