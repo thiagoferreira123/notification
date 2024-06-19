@@ -23,11 +23,6 @@ target 'notification' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'Firebase', :modular_headers => true
-  pod 'FirebaseCoreInternal', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true
-  pod 'FirebaseCore', :modular_headers => true
-
   target 'notificationTests' do
     inherit! :complete
     # Pods for testing
@@ -38,7 +33,8 @@ target 'notification' do
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
     )
   end
 end
