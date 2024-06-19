@@ -5,10 +5,9 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
-  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -25,7 +24,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import messaging from '@react-native-firebase/messaging';
+import {getFcmToken, registerListenerWithFCM} from './ios/notification/helper';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -64,28 +63,14 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  if (Platform.OS !== 'android') {
-    messaging()
-      .requestPermission()
-      .then(authStatus => {
-        const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  useEffect(() => {
+    getFcmToken();
+  }, []);
 
-        if (enabled) {
-          messaging().registerDeviceForRemoteMessages();
-          console.log('Authorization status:', authStatus);
-
-          messaging()
-            .getToken()
-            .then(token => {
-              console.log('Token:', token);
-            })
-            .catch(error => console.error(error));
-        }
-      })
-      .catch(error => console.error(error));
-  }
+  useEffect(() => {
+    const unsubscribe = registerListenerWithFCM();
+    return unsubscribe;
+  }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>
